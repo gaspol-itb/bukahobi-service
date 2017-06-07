@@ -7,6 +7,6 @@ function Funding (mongoConnection) {
 	this.mongoConnection = mongoConnection;
 
 	this.models = {
-		Group: this.mongoConnection.model('Funding', require('./models/funding'))
+		Funding: this.mongoConnection.model('Funding', require('./models/funding'))
 	};
 };

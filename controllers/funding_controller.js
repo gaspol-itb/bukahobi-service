@@ -1,4 +1,4 @@
-var assert = require('assert-plus');
+var expressValidation = require('express-validation');
 
 var FundingService = require('../services/funding');
 
