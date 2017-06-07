@@ -20,6 +20,10 @@
   "dependencies": {
     "assert-plus": "^1.0.0",
     "body-parser": "^1.17.2",
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "express-validation": "^1.0.2",
+    "joi": "^10.5.2",
+    "mongoose": "^4.10.5",
+    "underscore": "^1.8.3"
   }
 }
