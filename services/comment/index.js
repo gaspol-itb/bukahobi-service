@@ -55,7 +55,7 @@ CommentService.prototype.updateComment = function (commentId, commentData, callb
 	assert.object(commentData);
 	assert.string(commentData.text);
 
-	this.models.Comment.findOneAndUpdate({ _id : commentId }, { text : commentData.text }, { new : true }, function (err, updatedComment) {
+	this.models.Comment.findOneAndUpdate({ _id : commentId }, { $set : commentData }, { new : true }, function (err, updatedComment) {
 		if (err) {
 			return callback(err);
 		}

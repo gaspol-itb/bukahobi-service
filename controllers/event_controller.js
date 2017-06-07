@@ -1,9 +1,12 @@
 var expressValidation = require('express-validation');
+var _ = require('underscore');
 
 var EventService = require('../services/event');
+var FundingService = require('../services/funding');
 
 module.exports = function (app) {
 	var eventService = new EventService(app.mongoConnection);
+    var fundingService = new FundingService(app.mongoConnection);
 
 	app.post('/event', function (req, res) {
 		expressValidation({
@@ -11,15 +14,23 @@ module.exports = function (app) {
                 group_id: Joi.string().required(),
                 user_id: Joi.string().required(),
                 text: Joi.string().required(),
-                is_funding: Joi.boolean().required()
+                is_funding: Joi.boolean().required(),
+                target_amount: Joi.number().optional()
             }
         }),
         function (req, res, next) {
+            var amt = req.body.target_amount;
+
+            if (!_.isNumber(amt)) {
+                amt = 0;
+            }
+
         	var eventData = {
         		group_id: req.body.group_id,
         		user_id: req.body.user_id,
         		text: req.body.text,
-        		is_funding: req.body.is_funding
+        		is_funding: req.body.is_funding,
+                target_amount: amt
         	};
 
         	eventService.createEvent(eventData, function (err, event) {
@@ -101,4 +112,39 @@ module.exports = function (app) {
         	res.status(200).send(res.locals.response_data);
         }
 	});
+
+    app.post('/funding', function (req, res) {
+        expressValidation({
+            body: {
+                event_id: Joi.string().required(),
+                user_id: Joi.string().required(),
+                amount: Joi.number().required()
+            }
+        }),
+        function (req, res, next) {
+            var eventId = req.body.event_id;
+
+            var fundingData = {
+                user_id: req.body.user_id,
+                amount: req.body.amount
+            };
+
+            fundingService.createFunding(eventId, fundingData, function (err, funding) {
+                if (err) {
+                    return callback(err);
+                }
+
+                eventService.funding(eventId, fundingData, function (err, event) {
+                    if (err) {
+                        return next(err);   
+                    }
+
+                    res.locals.response_data = event;
+                });
+            });
+        },
+        function (req, res) {
+            res.status(200).send(res.locals.response_data);
+        }
+    });
 };

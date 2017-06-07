@@ -17,6 +17,7 @@ EventService.prototype.createEvent = function (eventData, callback) {
 	assert.string(eventData.user_id);
 	assert.string(eventData.text);
 	assert.bool(eventData.is_function);
+	assert.number(eventData.target_amount);
 
 	this.models.Event.create(eventData, function (err, event) {
 		if (err) {
@@ -56,12 +57,35 @@ EventService.prototype.updateEvent = function (eventId, eventData, callback) {
 	assert.object(eventData);
 	assert.string(eventData.text);
 
-	this.models.Comment.findOneAndUpdate({ _id : eventId }, { text : eventData.text }, { new : true }, function (err, updatedEvent) {
+	this.models.Comment.findOneAndUpdate({ _id : eventId }, { $set : eventData }, { new : true }, function (err, updatedEvent) {
 		if (err) {
 			return callback(err);
 		}
 
 		callback(null, updatedEvent.toJSON());
+	});
+};
+
+EventService.prototype.funding = function (eventId, fundingData, callback) {
+	assert.string(eventId);
+	assert.object(fundingData);
+	assert.string(fundingData.user_id);
+	assert.number(fundingData.amount);
+
+	this.models.Comment.findOne({ _id : eventId }, function (err, event) {
+		if (err) {
+			return callback(err);
+		}
+
+		var current_amount = fundingData.amount + event.current_amount;
+
+		this.models.Comment.findOneAndUpdate({ _id : eventId }, { $set : { current_amount : current_amount }, { new : true }, function (err, updatedEvent) {
+			if (err) {
+				return callback (err);
+			}
+			
+			callback(null, updatedEvent.toJSON());
+		}});
 	});
 };
 

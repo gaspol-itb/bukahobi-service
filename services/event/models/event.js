@@ -6,7 +6,9 @@ var EventSchema = new mongoose.Schema({
     group_id: { type: String, required: true },
     user_id: { type: String, required: true },
     text: { type: String, required: true },
-    is_funding: { type: Boolean, required: true }
+    is_funding: { type: Boolean, required: true },
+    current_amount: { type: Number, required: true, default: 0 },
+    target_amount: { type: Number, required: true }
 }, {
     timestamps: true,
     toJSON: {

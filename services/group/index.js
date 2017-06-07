@@ -67,7 +67,7 @@ GroupService.prototype.updateGroup = function (groupId, groupData, callback) {
 	assert.object(groupData);
 	assert.string(groupData.text);
 
-	this.models.Group.findOneAndUpdate({ _id : groupId }, { text : groupData.text }, { new : true }, function (err, updatedGroup) {
+	this.models.Group.findOneAndUpdate({ _id : groupId }, { $set : groupData }, { new : true }, function (err, updatedGroup) {
 		if (err) {
 			return callback(err);
 		}

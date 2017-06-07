@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var FundingSchema = new mongoose.Schema({
     event_id: { type: String, required: true },
     user_id: { type: String, required: true },
-    text: { type: String }
+    amount: { type: Number, required: true }
 }, {
     timestamps: true,
     toJSON: {
